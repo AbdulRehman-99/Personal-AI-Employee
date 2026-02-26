@@ -1,7 +1,14 @@
 # AI Employee Dashboard
 
+# Dashboard
+
+## Summary
+- **Bank Balance:** $N/A
+- **Pending Messages:** 0
+- **Active Projects:** 0
+
 ## Recent Activity
-- [2026-02-20] System initialized.
+
 
 ## Pending Tasks
 No pending tasks found.
