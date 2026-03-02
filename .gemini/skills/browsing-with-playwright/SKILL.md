@@ -157,3 +157,25 @@ See [references/playwright-tools.md](references/playwright-tools.md) for complet
 | Form not submitting | Use `"submit": true` with browser_type |
 | Page not loading | Increase wait time or use browser_wait_for |
 | Server not responding | Stop and restart: `bash scripts/stop-server.sh && bash scripts/start-server.sh` |
+
+## LinkedIn Automation
+
+This skill also includes standalone LinkedIn automation for posting and message watching.
+
+### Capabilities
+- **LinkedIn Posting**: Automatically log in, save session, and post updates.
+- **LinkedIn Watching**: Monitor for unread messages and create vault tasks.
+
+### Usage
+
+#### 1. Initial Login
+Save your session cookies (one-time or when expired):
+```powershell
+python .gemini/skills/browsing-with-playwright/scripts/linkedin-automation.py --login
+```
+
+#### 2. Posting Updates
+```powershell
+python .gemini/skills/browsing-with-playwright/scripts/linkedin-automation.py --text "Your post content here"
+```
+
