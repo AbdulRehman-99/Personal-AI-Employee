@@ -3,23 +3,25 @@
 Welcome to your Autonomous Digital FTE. This project transforms Gemini CLI from a simple chatbot into a proactive employee that manages your Gmail, LinkedIn, and files local-first.
 
 ## 🚀 Silver Tier Features
-- **Proactive Watchers**: Monitors Gmail and LinkedIn every 5 minutes automatically.
-- **Action Loop**: Executes approved posts and emails while you sleep.
+- **Proactive Watchers**: Monitors Gmail, LinkedIn, WhatsApp, and local folders automatically.
+- **Modular Skills**: Dedicated skills for Gmail, LinkedIn, WhatsApp, and Filesystem management.
+- **Action Loop**: Executes approved posts, emails, and messages while you sleep.
 - **Reasoning First**: Always creates a `Plan.md` before taking action.
 - **Audit Trails**: Every action is logged with a timestamped screenshot in the `Vault/Logs`.
 
 ## 📂 Project Structure
 ```text
 ├── AI_Employee_Vault/         # The GUI & Memory (Obsidian)
-│   ├── Needs_Action/          # Incoming Tasks
-│   ├── Plans/                 # AI Reasoning Files
-│   ├── Pending_Approval/      # Staging for your Review
+│   ├── Needs_Action/          # Incoming Tasks (Email, LinkedIn, File Drops)
+│   ├── Plans/                 # AI Reasoning & Planning Files
+│   ├── Pending_Approval/      # Staging for Human Review
 │   ├── Approved/              # Trigger for Action Loop
-│   ├── Done/                  # Completed Archive
-│   └── Logs/                  # Action Screenshots
-├── orchestrator.py            # The "Master On" Switch
-├── task_orchestrator.py       # The "Hands" (Action Loop)
-└── .gemini/skills/            # Modular Agent Skills
+│   ├── Done/                  # Completed Cycle Archive
+│   └── Logs/                  # Action Logs & Screenshots
+├── orchestrator.py            # Master Process (Starts all Watchers)
+├── task_orchestrator.py       # Action Execution Loop
+├── drop_zone/                 # Drag & Drop folder for File Drops
+└── .gemini/skills/            # Specialized Agent Skills (Gmail, LinkedIn, FS)
 ```
 
 ## 🛠️ Setup & Installation
@@ -28,16 +30,18 @@ Welcome to your Autonomous Digital FTE. This project transforms Gemini CLI from 
 - Python 3.13+
 - Node.js 24+
 - Playwright
+- Watchdog (for filesystem monitoring)
 
 ### 2. Install Dependencies
 ```powershell
-pip install google-auth-oauthlib google-auth-httplib2 google-api-python-client playwright
+pip install google-auth-oauthlib google-auth-httplib2 google-api-python-client playwright watchdog
 playwright install chromium
 ```
 
 ### 3. Authentication
 - **Gmail**: Place `credentials.json` in `.gemini/skills/gmail-integration/` and run the watcher once.
 - **LinkedIn**: Run `python .gemini/skills/browsing-with-playwright/scripts/linkedin-automation.py --login` to save your session.
+- **WhatsApp**: Run `python .gemini/skills/whatsapp-integration/scripts/whatsapp_watcher.py --login` and scan the QR code.
 
 ## 🏃 Running the AI Employee
 To start all watchers and the action loop, run:

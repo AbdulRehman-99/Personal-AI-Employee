@@ -1,4 +1,21 @@
+# Python artifacts
 __pycache__/
+*.py[cod]
+*$py.class
 .mypy_cache/
+.pytest_cache/
+
+# Environments and Secrets
+.env
+.gemini/.env
 credentials.json
-Personal AI Employee Hackathon 0_ Building Autonomous FTEs in 2026
+token.json
+linkedin_session.json
+whatsapp_session/
+.gemini/skills/gmail-integration/credentials.json
+.gemini/skills/gmail-integration/token.json
+.gemini/skills/browsing-with-playwright/linkedin_session.json
+
+# Tool specific
+.vscode/
+.idea/

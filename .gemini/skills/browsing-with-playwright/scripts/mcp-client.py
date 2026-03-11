@@ -229,7 +229,7 @@ class StdioTransport:
 
         # Wait for initialize response
         try:
-            resp = self._response_queue.get(timeout=10)
+            resp = self._response_queue.get(timeout=30)
             if "error" in resp:
                 raise MCPClientError(f"Initialize failed: {resp['error']}")
         except queue.Empty:
@@ -243,6 +243,17 @@ class StdioTransport:
 
     def _read_responses(self):
         """Background thread to read responses from the server."""
+        import threading
+
+        def handle_stderr():
+            while self._process and self._process.poll() is None:
+                err_line = self._process.stderr.readline()
+                if err_line:
+                    print(f"Server Error: {err_line.strip()}", file=sys.stderr)
+
+        stderr_thread = threading.Thread(target=handle_stderr, daemon=True)
+        stderr_thread.start()
+
         while self._process and self._process.poll() is None:
             try:
                 line = self._process.stdout.readline()

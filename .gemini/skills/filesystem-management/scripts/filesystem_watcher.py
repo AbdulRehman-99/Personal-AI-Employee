@@ -1,19 +1,27 @@
-# filesystem_watcher.py
+# .gemini/skills/filesystem-management/scripts/filesystem_watcher.py
 import time
 import shutil
 import logging
+import os
 from pathlib import Path
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
+
+# Robustly find the project root
+# Path: <root>/.gemini/skills/filesystem-management/scripts/filesystem_watcher.py
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
+VAULT_PATH = PROJECT_ROOT / "AI_Employee_Vault"
+DROP_FOLDER = PROJECT_ROOT / "drop_zone"
+NEEDS_ACTION = VAULT_PATH / "Needs_Action"
 
 # Configure Logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("FileSystemWatcher")
 
 class DropFolderHandler(FileSystemEventHandler):
-    def __init__(self, vault_path: str, drop_folder: str):
-        self.needs_action = Path(vault_path) / 'Needs_Action'
-        self.drop_folder = Path(drop_folder)
+    def __init__(self, vault_path: Path, drop_folder: Path):
+        self.needs_action = vault_path / 'Needs_Action'
+        self.drop_folder = drop_folder
         
     def on_created(self, event):
         if event.is_directory:
@@ -47,16 +55,14 @@ New file dropped for processing. Original source: {source.absolute()}
 ''')
 
 if __name__ == "__main__":
-    VAULT_PATH = "AI_Employee_Vault"
-    DROP_FOLDER = "drop_zone"
-    
     # Ensure directories exist
-    Path(VAULT_PATH).mkdir(exist_ok=True)
-    Path(DROP_FOLDER).mkdir(exist_ok=True)
+    VAULT_PATH.mkdir(exist_ok=True)
+    DROP_FOLDER.mkdir(exist_ok=True)
+    NEEDS_ACTION.mkdir(exist_ok=True)
     
     event_handler = DropFolderHandler(VAULT_PATH, DROP_FOLDER)
     observer = Observer()
-    observer.schedule(event_handler, DROP_FOLDER, recursive=False)
+    observer.schedule(event_handler, str(DROP_FOLDER), recursive=False)
     
     logger.info(f"Watching folder: {DROP_FOLDER}")
     observer.start()

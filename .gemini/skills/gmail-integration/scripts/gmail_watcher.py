@@ -9,8 +9,12 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 import sys
 
-# If modifying these scopes, delete the file token.json.
-SCOPES = ['https://www.googleapis.com/auth/gmail.readonly', 'https://www.googleapis.com/auth/gmail.modify']
+# Combined scopes for reading, modifying (marking as read), and sending.
+SCOPES = [
+    'https://www.googleapis.com/auth/gmail.readonly',
+    'https://www.googleapis.com/auth/gmail.modify',
+    'https://www.googleapis.com/auth/gmail.send'
+]
 
 def get_service():
     creds = None
@@ -92,19 +96,23 @@ def main():
 
     while True:
         try:
-            results = service.users().messages().list(userId='me', labelIds=['UNREAD'], maxResults=10).execute()
+            print("Checking for unread messages...")
+            # Use q='is:unread' to be more broad than just labelIds=['UNREAD']
+            results = service.users().messages().list(userId='me', q='is:unread', maxResults=10).execute()
             messages = results.get('messages', [])
 
             if not messages:
-                print('No new messages.')
+                print('No unread messages found.')
             else:
+                print(f"Found {len(messages)} unread messages. Processing...")
                 for message in messages:
                     create_task_file(service, message['id'], base_dir)
             
+            print("Done checking. Sleeping for 60 seconds...")
             time.sleep(60) # Check every minute
 
         except Exception as e:
-            print(f"An error occurred: {e}")
+            print(f"An error occurred during Gmail scan: {e}")
             time.sleep(60)
 
 if __name__ == '__main__':

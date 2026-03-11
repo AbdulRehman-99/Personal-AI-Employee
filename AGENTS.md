@@ -12,12 +12,14 @@ To provide autonomous assistance with high-level reasoning, proactive problem-so
 1.  **Multi-Channel Perception**:
     *   **Gmail Watcher**: Monitors inbox for unread messages.
     *   **LinkedIn Watcher**: Monitors LinkedIn messages and unread counts.
+    *   **WhatsApp Watcher**: Monitors WhatsApp Web for unread messages and keywords.
     *   **Filesystem Watcher**: Monitors the `drop_zone` for new document uploads.
 2.  **Reasoning & Planning**:
     *   Creates detailed `Plan.md` files for every complex task.
 3.  **Action & Automation**:
     *   **LinkedIn Automation**: Automated posting and messaging using Playwright.
     *   **Gmail Integration**: Sending and drafting emails via the Gmail API.
+    *   **WhatsApp Integration**: Sending automated messages via Playwright.
 4.  **Human-in-the-Loop (HITL)**:
     *   Strict file-based approval system for all external actions.
 5.  **Audit & Logging**:
@@ -43,6 +45,9 @@ To provide autonomous assistance with high-level reasoning, proactive problem-so
 - **`.gemini/skills/`**:
     - `browsing-with-playwright`: Core browser automation for LinkedIn.
     - `gmail-integration`: Gmail API tools.
+    - `whatsapp-integration`: WhatsApp Web automation and monitoring.
+    - `filesystem-management`: Drop zone monitoring and task ingestion.
+    - `ai-employee-manager`: Vault auditing and task processing logic.
     - `approval-workflow`: Scripted tools for managing HITL steps.
 
 ## Operational Workflows
@@ -60,4 +65,6 @@ To provide autonomous assistance with high-level reasoning, proactive problem-so
 ## Command Reference
 - **Start All Systems**: `python orchestrator.py`
 - **Manual LinkedIn Login**: `python .gemini/skills/browsing-with-playwright/scripts/linkedin-automation.py --login`
+- **Manual WhatsApp Login**: `python .gemini/skills/whatsapp-integration/scripts/whatsapp_watcher.py --login`
 - **Manual Gmail Auth**: `python .gemini/skills/gmail-integration/scripts/gmail_watcher.py`
+- **Manual Filesystem Watcher**: `python .gemini/skills/filesystem-management/scripts/filesystem_watcher.py`

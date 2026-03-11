@@ -13,10 +13,10 @@ To provide autonomous assistance with high-level reasoning, proactive problem-so
 ## Operational Workflows
 
 ### 1. New Task Ingestion
-- Files/Messages arrive in `Needs_Action`.
+- Files/Messages arrive in `Needs_Action`. (Source: Gmail, LinkedIn, WhatsApp, File Drop).
 
 ### 2. Reasoning & Planning (Silver Tier)
-Before executing a complex task (Email reply, LinkedIn post, File processing), the AI MUST:
+Before executing a complex task (Email reply, WhatsApp message, LinkedIn post, File processing), the AI MUST:
 1.  Analyze the request in `Needs_Action`.
 2.  Create a `PLAN_<task_name>.md` in the `Plans/` folder.
 3.  The plan should include a checklist of steps (e.g., [ ] Draft email, [ ] Request approval, [ ] Send via MCP).
@@ -59,6 +59,11 @@ The `Pending_Approval` folder is the gatekeeper for sensitive actions.
 *   **Hashtags:** Use 3-5 relevant hashtags.
 *   **Content:** Focus on value, industry insights, or project updates.
 
+### WhatsApp
+*   **Tone:** Conversational but respectful.
+*   **Response Time:** Aim for within 2 hours for urgent keywords.
+*   **Drafting:** Always verify the contact name/number before sending.
+
 ## Operational Security
-*   **Credentials:** Never store `credentials.json`, `token.json`, or `linkedin_session.json` in the Vault or commit them to git.
+*   **Credentials:** Never store `credentials.json`, `token.json`, `linkedin_session.json`, or `whatsapp_session/` in the Vault or commit them to git.
 *   **Session Management:** If authentication fails, notify the user immediately to re-authenticate.

@@ -1,30 +1,37 @@
 # .gemini/skills/ai-employee-manager/scripts/task_processor.py
 import argparse
 import os
+import shutil
 from pathlib import Path
 
-VAULT_PATH = Path("AI_Employee_Vault")
+# Robustly find the vault path relative to this script
+# Path: <root>/.gemini/skills/ai-employee-manager/scripts/task_processor.py
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
+VAULT_PATH = PROJECT_ROOT / "AI_Employee_Vault"
 NEEDS_ACTION = VAULT_PATH / "Needs_Action"
 DONE = VAULT_PATH / "Done"
 
 def process_task(file_name):
+    # Ensure directories exist
+    DONE.mkdir(parents=True, exist_ok=True)
+    
     source = NEEDS_ACTION / file_name
     dest = DONE / file_name
     
     if not source.exists():
-        print(f"File {file_name} not found in {NEEDS_ACTION}.")
+        print(f"Error: File '{file_name}' not found in {NEEDS_ACTION}")
         return
 
-    # Move file to Done folder
-    os.rename(source, dest)
-    print(f"Moved {file_name} to {DONE}.")
+    try:
+        # Move file to Done folder
+        shutil.move(str(source), str(dest))
+        print(f"Successfully moved '{file_name}' to {DONE}")
+    except Exception as e:
+        print(f"Error moving file: {e}")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--file", help="The name of the file to move to Done.")
+    parser = argparse.ArgumentParser(description="Process a task by moving it from Needs_Action to Done.")
+    parser.add_argument("--file", required=True, help="The name of the file to move to Done.")
     args = parser.parse_args()
     
-    if args.file:
-        process_task(args.file)
-    else:
-        print("Please provide a file name using --file.")
+    process_task(args.file)

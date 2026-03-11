@@ -38,11 +38,27 @@ This script will:
 *   Create a file in `AI_Employee_Vault/Needs_Action/EMAIL_<id>.md` for each new email.
 *   Mark the email as read (optional, check script configuration).
 
-### As an Action (Sending Email)
-To send an email, use the `send_email.py` script:
+### As an Action (Sending Email via Script)
+To send an email directly, use the `send_email.py` script:
 ```bash
 python .gemini/skills/gmail-integration/scripts/send_email.py --to "recipient@example.com" --subject "Subject" --body "Body content"
 ```
+
+### As an MCP Server (Silver Tier Recommended)
+This skill includes an MCP-compliant server for automated actions.
+
+**Server Command:**
+```bash
+python .gemini/skills/gmail-integration/scripts/gmail_mcp_server.py
+```
+
+**Available Tools:**
+*   `send_email`: Sends an email using the Gmail API.
+    *   `to` (string): Recipient email address.
+    *   `subject` (string): Email subject.
+    *   `body` (string): Email body content.
+
+The `task_orchestrator.py` automatically uses this MCP server to process approved email tasks.
 
 ## Security Note
 *   **Credentials**: Never commit `credentials.json` or `token.json` to version control.

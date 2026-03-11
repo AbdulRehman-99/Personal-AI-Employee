@@ -7,7 +7,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 GMAIL_WATCHER = os.path.join(BASE_DIR, '.gemini', 'skills', 'gmail-integration', 'scripts', 'gmail_watcher.py')
 LINKEDIN_WATCHER = os.path.join(BASE_DIR, '.gemini/skills/browsing-with-playwright/scripts/linkedin_watcher.py')
-FS_WATCHER = os.path.join(BASE_DIR, 'filesystem_watcher.py')
+FS_WATCHER = os.path.join(BASE_DIR, '.gemini', 'skills', 'filesystem-management', 'scripts', 'filesystem_watcher.py')
 TASK_ORCHESTRATOR = os.path.join(BASE_DIR, 'task_orchestrator.py')
 
 def start_process(script_path):

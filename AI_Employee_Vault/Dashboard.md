@@ -1,3 +1,4 @@
+
 # AI Employee Dashboard (Silver Tier)
 
 ## Summary
@@ -10,12 +11,13 @@
 - **Filesystem:** Active
 - **Gmail:** Active (Monitoring Inbox)
 - **LinkedIn:** Active (Monitoring Messages)
+- **WhatsApp:** Active (Monitoring Messages)
 
 ## Approval Queue
 *No pending approvals.*
 
 ## Recent Activity
-*No recent activites.*
+*No recent activity,*
 
 ## System Health
 - **Reasoning Engine:** Active (Gemini CLI)
