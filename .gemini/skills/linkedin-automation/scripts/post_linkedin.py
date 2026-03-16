@@ -19,13 +19,20 @@ def login_and_save_session():
         
         # Wait for user to log in and reach the feed
         print("Waiting for login to complete (Feed to load)...")
-        page.wait_for_url("https://www.linkedin.com/feed/", timeout=0) 
-        page.wait_for_load_state("networkidle")
-        
-        print("Login detected. Saving session...")
-        context.storage_state(path=SESSION_FILE)
-        print(f"Session saved to {SESSION_FILE}")
-        browser.close()
+        try:
+            # Wait for 120 seconds or until URL contains feed
+            page.wait_for_url("**/feed/**", timeout=120000) 
+            print("Login detected. Capturing session...")
+            page.wait_for_load_state("networkidle")
+            context.storage_state(path=SESSION_FILE)
+            print(f"Session saved to {SESSION_FILE}")
+        except Exception as e:
+            print(f"Login timed out or failed: {e}")
+            # Try to save whatever state we have anyway
+            context.storage_state(path=SESSION_FILE)
+            print(f"Attempted to save current state to {SESSION_FILE}")
+        finally:
+            browser.close()
 
 def post_update(text):
     if not os.path.exists(SESSION_FILE):

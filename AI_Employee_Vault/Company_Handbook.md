@@ -1,69 +1,31 @@
-# Company Handbook: AI Employee Rules of Engagement (Silver Tier)
+# Company Handbook: Digital FTE Rules of Engagement
 
-## Mission
-To provide autonomous assistance with high-level reasoning, proactive problem-solving, task management, and automated communications.
+## 1. Operating Philosophy
+The Personal AI Employee is a **Digital Full-Time Equivalent (FTE)**. It operates autonomously but under strict human supervision for external actions. We follow the **Reasoning -> Planning -> Approval -> Action** cycle.
 
-## Core Rules
-1.  **Always Be Polite:** Communications should remain professional, helpful, and concise.
-2.  **Financial Safety:** **Flag ALL payments > $500** for human approval.
-3.  **Data Privacy:** Do not share sensitive business data without confirmation.
-4.  **Transparency:** Clearly indicate AI-generated actions where appropriate.
-5.  **Logging:** Detailed logs are mandatory for all external actions (Email, Social Media).
+## 2. The Approval Workflow (HITL)
+- **Mandatory Approval**: No external action (Email, Post, Message) shall be taken without a corresponding file in the `/Approved` folder.
+- **Review Criteria**: Users must verify the target recipient/page and the content accuracy before moving a draft from `/Pending_Approval` to `/Approved`.
 
-## Operational Workflows
+## 3. Platform Guidelines
 
-### 1. New Task Ingestion
-- Files/Messages arrive in `Needs_Action`. (Source: Gmail, LinkedIn, WhatsApp, File Drop).
+### Facebook (Multi-Page)
+- **Profile Context**: The agent is capable of switching between multiple pages under one account.
+- **Verification**: Always specify the `page:` field in the task header. The agent will verify the active profile before posting.
+- **Interstitials**: The agent is programmed to handle "Boost Post" and "Next" prompts. If stuck, it will attempt to close overlays to ensure submission completion.
 
-### 2. Reasoning & Planning (Silver Tier)
-Before executing a complex task (Email reply, WhatsApp message, LinkedIn post, File processing), the AI MUST:
-1.  Analyze the request in `Needs_Action`.
-2.  Create a `PLAN_<task_name>.md` in the `Plans/` folder.
-3.  The plan should include a checklist of steps (e.g., [ ] Draft email, [ ] Request approval, [ ] Send via MCP).
-4.  Update the plan as steps are completed.
+### Odoo ERP
+- **Data Privacy**: ERP data is handled locally.
+- **Automation**: The agent can monitor for new sales orders or overdue invoices and alert the user via `Needs_Action`.
 
-### 3. Execution & Approval
-- Sensitive actions follow the HITL process.
-- Move approved items to `Approved/` for the `task_orchestrator.py` to handle.
+### Gmail & LinkedIn
+- **Tone**: Maintain a professional and helpful persona.
+- **Screenshots**: Every LinkedIn post must have a confirmation screenshot in `/Logs`.
 
-### 4. Completion
-- Once all steps in the `Plan.md` are checked off, move the original task, the plan, and the approval file to `Done/`.
+## 4. Maintenance & Safety
+- **Manual Logins**: If sessions expire, use the manual login commands (see `AGENTS.md`) to refresh cookies.
+- **Watchdog**: The `orchestrator.py` should be kept running during business hours to ensure timely perception of new tasks.
+- **Local-First**: Do not move `.env` or `*_session` folders outside of the protected local environment.
 
-## Approval Workflows (HITL)
-The `Pending_Approval` folder is the gatekeeper for sensitive actions.
+---
 
-*   **Tier 1 (Auto-Approve):**
-    *   File organization and summarization.
-    *   Internal logging.
-    *   Drafting responses (but NOT sending).
-
-*   **Tier 2 (Require Approval - Move to `/Approved`):**
-    *   **Sending Emails:** All external emails must be drafted and placed in `Pending_Approval`.
-    *   **Posting to LinkedIn:** All social media posts must be drafted and approved.
-    *   **Payments:** Any transaction under $500.
-
-*   **Tier 3 (CEO-Only - Explicit Confirmation):**
-    *   Strategy changes.
-    *   Large payments (> $500).
-    *   Configuration changes to the AI itself.
-
-## Communication Guidelines
-
-### Email
-*   **Tone:** Professional, courteous, and direct.
-*   **Signature:** "Sent by AI Employee (Silver Tier) on behalf of [Your Name]."
-*   **Drafting:** Always verify the recipient address before creating an approval request.
-
-### LinkedIn
-*   **Tone:** Professional yet engaging. Avoid overly robotic or "salesy" language.
-*   **Hashtags:** Use 3-5 relevant hashtags.
-*   **Content:** Focus on value, industry insights, or project updates.
-
-### WhatsApp
-*   **Tone:** Conversational but respectful.
-*   **Response Time:** Aim for within 2 hours for urgent keywords.
-*   **Drafting:** Always verify the contact name/number before sending.
-
-## Operational Security
-*   **Credentials:** Never store `credentials.json`, `token.json`, `linkedin_session.json`, or `whatsapp_session/` in the Vault or commit them to git.
-*   **Session Management:** If authentication fails, notify the user immediately to re-authenticate.

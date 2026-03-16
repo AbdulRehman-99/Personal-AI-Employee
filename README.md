@@ -1,62 +1,68 @@
-# Personal AI Employee (Silver Tier)
+# Personal AI Employee: Autonomous Digital FTE (Gold Tier)
 
-Welcome to your Autonomous Digital FTE. This project transforms Gemini CLI from a simple chatbot into a proactive employee that manages your Gmail, LinkedIn, and files local-first.
+This repository contains the infrastructure for a **Local-First, Autonomous Digital Employee**. It transforms a standard AI into a Full-Time Equivalent (FTE) that can monitor your communications, plan its own tasks, and execute external actions with Human-in-the-Loop (HITL) approval.
 
-## 🚀 Silver Tier Features
-- **Proactive Watchers**: Monitors Gmail, LinkedIn, WhatsApp, and local folders automatically.
-- **Modular Skills**: Dedicated skills for Gmail, LinkedIn, WhatsApp, and Filesystem management.
-- **Action Loop**: Executes approved posts, emails, and messages while you sleep.
-- **Reasoning First**: Always creates a `Plan.md` before taking action.
-- **Audit Trails**: Every action is logged with a timestamped screenshot in the `Vault/Logs`.
+---
 
-## 📂 Project Structure
-```text
-├── AI_Employee_Vault/         # The GUI & Memory (Obsidian)
-│   ├── Needs_Action/          # Incoming Tasks (Email, LinkedIn, File Drops)
-│   ├── Plans/                 # AI Reasoning & Planning Files
-│   ├── Pending_Approval/      # Staging for Human Review
-│   ├── Approved/              # Trigger for Action Loop
-│   ├── Done/                  # Completed Cycle Archive
-│   └── Logs/                  # Action Logs & Screenshots
-├── orchestrator.py            # Master Process (Starts all Watchers)
-├── task_orchestrator.py       # Action Execution Loop
-├── drop_zone/                 # Drag & Drop folder for File Drops
-└── .gemini/skills/            # Specialized Agent Skills (Gmail, LinkedIn, FS)
-```
+## 🌟 Gold Tier Features
+- **Multi-Channel Perception**: Watchers for Gmail, LinkedIn, WhatsApp, Facebook, Odoo, and Filesystem.
+- **Agentic Planning**: Every task generates a `Plan.md` in the Obsidian Vault.
+- **Next-Gen Facebook Automation**: Handles multi-page profile switching and complex multi-step post submissions.
+- **ERP Integration**: Local-first Odoo 17 integration via Docker for financial and sales automation.
+- **Audit & Compliance**: Automated `Dashboard.md` and detailed action screenshots in `Logs/`.
 
-## 🛠️ Setup & Installation
+---
 
-### 1. Prerequisites
-- Python 3.13+
-- Node.js 24+
-- Playwright
-- Watchdog (for filesystem monitoring)
+## 🚀 Quick Start
 
-### 2. Install Dependencies
-```powershell
-pip install google-auth-oauthlib google-auth-httplib2 google-api-python-client playwright watchdog
-playwright install chromium
-```
+### 1. Prerequisite: Environment Setup
+Ensure you have Python 3.10+ and Docker installed.
 
-### 3. Authentication
-- **Gmail**: Place `credentials.json` in `.gemini/skills/gmail-integration/` and run the watcher once.
-- **LinkedIn**: Run `python .gemini/skills/browsing-with-playwright/scripts/linkedin-automation.py --login` to save your session.
-- **WhatsApp**: Run `python .gemini/skills/whatsapp-integration/scripts/whatsapp_watcher.py --login` and scan the QR code.
-
-## 🏃 Running the AI Employee
-To start all watchers and the action loop, run:
-```powershell
+### 2. Launch the System
+Start all watchers and the task orchestrator:
+```bash
 python orchestrator.py
 ```
 
-## 🔄 The Workflow
-1.  **Incoming**: Check `AI_Employee_Vault/Needs_Action` for new tasks.
-2.  **Plan**: Check `AI_Employee_Vault/Plans` to see how the AI intends to solve it.
-3.  **Approve**: Review drafts in `Pending_Approval` and move them to `Approved`.
-4.  **Confirm**: Watch the `Logs` folder for the successful execution screenshot.
-
-## 📜 Rules of Engagement
-See [Company_Handbook.md](AI_Employee_Vault/Company_Handbook.md) for detailed rules and safety thresholds.
+### 3. ERP Services (Odoo)
+Launch the local Odoo environment:
+```bash
+docker-compose up -d
+```
 
 ---
-*Built for the Personal AI Employee Hackathon 0 (2026).*
+
+## 🏗️ The Vault (Obsidian Ready)
+The `AI_Employee_Vault/` is the brain's workspace. Connect it to **Obsidian** for a real-time view of your agent's thoughts and actions.
+
+- **Needs_Action**: Incoming triggers from the world.
+- **Plans**: How the agent intends to solve the task.
+- **Pending_Approval**: Drafts awaiting your "Go Ahead".
+- **Approved**: The green light for execution.
+- **Done**: Historical archive of all completed work.
+- **Logs**: Visual proof (screenshots) of every automated action.
+
+---
+
+## 🛠️ Skills & Tools
+- **browsing-with-playwright**: Core browser automation.
+- **facebook-integration**: Robust multi-page posting.
+- **odoo-integration**: ERP data management.
+- **gmail-integration**: Secure email handling.
+- **whatsapp-integration**: Real-time communication.
+
+---
+
+## 📜 Workflow: The Reasoning Loop
+1. **Perceive**: A watcher detects a new email or notification.
+2. **Reason**: Gemini CLI reads the input and creates a `Plan.md`.
+3. **Draft**: The agent prepares an action (e.g., a Facebook post).
+4. **Approve**: You review the draft in the Vault and move it to `Approved/`.
+5. **Act**: The `task_orchestrator.py` executes the action and logs proof.
+
+---
+
+## ⚖️ Rules of Engagement
+- **No Unapproved Actions**: The agent NEVER posts or sends emails without a file in the `Approved/` folder.
+- **Visual Proof**: Every browser action must capture a screenshot in `Logs/`.
+- **Local First**: All sessions and ERP data stay on your machine.

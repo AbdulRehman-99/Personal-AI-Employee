@@ -7,7 +7,7 @@ __pycache__/
 
 # Environments and Secrets
 .env
-.gemini/.env
+**/.env
 credentials.json
 token.json
 linkedin_session.json
@@ -19,3 +19,17 @@ whatsapp_session/
 # Tool specific
 .vscode/
 .idea/
+
+# Automation Sessions (Cookies/Secrets)
+**/*_session/
+
+# Debug Artifacts
+debug_*.png
+post_error_debug.png
+FB_POST_*.png
+
+# Obsidian Workspace State
+**/workspace.json
+
+# Hackathon Documentation
+Personal AI Employee Hackathon 0_ Building Autonomous FTEs in 2026.md
