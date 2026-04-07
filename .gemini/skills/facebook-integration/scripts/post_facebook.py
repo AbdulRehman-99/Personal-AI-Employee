@@ -6,28 +6,39 @@ from playwright.sync_api import sync_playwright
 # --- CONFIGURATION ---
 # Absolute path to store your login session
 SESSION_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), 'facebook_session'))
+STORAGE_STATE = os.path.join(SESSION_DIR, 'storage_state.json')
 
 def switch_profile(page, target_profile_name):
     """
     Switches the current Facebook context to the specified Page/Profile.
     """
+    # Clean up quotes if passed in
+    target_profile_name = target_profile_name.strip("\"'")
     print(f"Attempting to switch profile to: {target_profile_name}")
     
     try:
-        # 1. Click Account/Profile Menu (Top Right - the profile picture button)
+        # Check if we are already on the correct profile (look at top right or nav)
         account_selectors = [
-            "div[role='button'][aria-label='Your profile']",
-            "div[role='button'][aria-label='Account']",
-            "div[aria-label='Account controls and settings']",
-            "svg[aria-label='Your profile']",
+            f"div[role='button'][aria-label*='{target_profile_name}']",
+            f"div[role='button'][aria-label='Your profile']",
+            f"div[role='button'][aria-label='Account']",
             "img[alt*='profile picture']"
         ]
         
+        # Quick check: Is the name already visible in a profile link?
+        if page.locator(f"a[role='link'] span:has-text('{target_profile_name}')").first.is_visible(timeout=2000):
+            print(f"Target profile '{target_profile_name}' seems to be already active (found in link).")
+            return True
+
         account_btn = None
         for sel in account_selectors:
             try:
                 btn = page.locator(sel).first
                 if btn.is_visible(timeout=3000):
+                    label = btn.get_attribute("aria-label") or ""
+                    if target_profile_name.lower() in label.lower():
+                        print(f"Target profile '{target_profile_name}' is already active (found in button label: '{label}').")
+                        return True
                     account_btn = btn
                     print(f"Found Account button with: {sel}")
                     break
@@ -41,9 +52,9 @@ def switch_profile(page, target_profile_name):
             print("Error: Could not find Account menu button.")
             return False
 
-        # 2. Check if we are already on the correct profile
+        # 2. Check if the name is in the opened menu (as active)
         if page.locator(f"div[role='link'] span:has-text('{target_profile_name}')").first.is_visible():
-            print(f"Target profile '{target_profile_name}' is already active.")
+            print(f"Target profile '{target_profile_name}' is already active (confirmed in menu).")
             account_btn.click() # Close menu
             return True
 
@@ -90,14 +101,21 @@ def run_home_post(text, url=None, page_name=None, screenshot_path=None, headless
     """
     with sync_playwright() as p:
         print(f"Launching browser (Session: {SESSION_DIR})")
+        
+        launch_args = {
+            "user_data_dir": SESSION_DIR,
+            "headless": headless,
+            "channel": "chrome",
+            "slow_mo": 500,
+            "args": ["--disable-blink-features=AutomationControlled"]
+        }
+        
+        if os.path.exists(STORAGE_STATE):
+            print(f"Loading storage state from {STORAGE_STATE}")
+            launch_args["storage_state"] = STORAGE_STATE
+
         try:
-            context = p.chromium.launch_persistent_context(
-                user_data_dir=SESSION_DIR,
-                headless=headless,
-                channel="chrome",
-                slow_mo=500,
-                args=["--disable-blink-features=AutomationControlled"]
-            )
+            context = p.chromium.launch_persistent_context(**launch_args)
         except Exception as e:
             print(f"Error: Ensure all other Chrome windows are closed. {e}")
             return
@@ -124,7 +142,6 @@ def run_home_post(text, url=None, page_name=None, screenshot_path=None, headless
             # Post Detection
             print("Locating post field...")
             
-            # Check if dialog is already open (unlikely but possible)
             textbox_selector = "div[role='dialog'] div[role='textbox']"
             if page.locator(textbox_selector).first.is_visible():
                 print("Post dialog already open.")
@@ -151,7 +168,6 @@ def run_home_post(text, url=None, page_name=None, screenshot_path=None, headless
 
                 if trigger:
                     print(f"Clicking trigger...")
-                    # Try to click the parent button if it exists
                     try:
                         parent_btn = trigger.locator("xpath=./ancestor::div[@role='button']").first
                         if parent_btn.is_visible(timeout=1000):
@@ -161,7 +177,6 @@ def run_home_post(text, url=None, page_name=None, screenshot_path=None, headless
                     except:
                         trigger.click(force=True)
                     
-                    # Wait a bit for dialog
                     try:
                         page.wait_for_selector(textbox_selector, state="visible", timeout=5000)
                     except:
@@ -182,27 +197,23 @@ def run_home_post(text, url=None, page_name=None, screenshot_path=None, headless
             print("Pasting message content...")
             textbox = page.locator(textbox_selector).first
             textbox.focus()
-            # Use fill for instant entry (like pasting)
             textbox.fill(text)
-            
-            print("Waiting for Post button to detect content...")
-            time.sleep(2) # Short buffer for UI state update
+            time.sleep(2)
             
             print("Clicking Post/Submit...")
-            # Facebook multi-step dialog handler (e.g., Next -> Post/Share)
-            for step in range(4):
+            for step in range(5):
                 print(f"Submission Step {step + 1}...")
                 
-                # Selectors for the primary action button
+                # Priority: Post/Share/Publish, then Next/Done
                 submit_selectors = [
+                    "div[role='dialog'] div[aria-label='Post']",
                     "div[role='dialog'] [role='button']:has-text('Post')",
                     "div[role='dialog'] [role='button']:has-text('Share')",
                     "div[role='dialog'] [role='button']:has-text('Publish')",
-                    "div[role='dialog'] [role='button']:has-text('Next')",
-                    "div[role='dialog'] [role='button']:has-text('Done')",
-                    "div[role='dialog'] [aria-label='Post']",
                     "div[role='dialog'] [aria-label='Share now']",
                     "div[role='dialog'] [aria-label='Publish']",
+                    "div[role='dialog'] [role='button']:has-text('Next')",
+                    "div[role='dialog'] [role='button']:has-text('Done')",
                     "div[role='dialog'] [aria-label='Next']"
                 ]
                 
@@ -211,71 +222,79 @@ def run_home_post(text, url=None, page_name=None, screenshot_path=None, headless
                     try:
                         candidates = page.locator(sel)
                         count = candidates.count()
-                        
-                        # Iterate backwards (bottom-up) because the main Post button is usually at the bottom
-                        # and "Add to your post" is often above it.
                         for i in range(count - 1, -1, -1):
                             target = candidates.nth(i)
-                            if target.is_visible(timeout=1000):
-                                # Validation: Ensure it's not the "Add to your post" button
-                                label = target.get_attribute("aria-label") or ""
-                                text_content = target.text_content() or ""
+                            if target.is_visible(timeout=3000):
+                                label = (target.get_attribute("aria-label") or "").strip()
+                                text_content = (target.text_content() or "").strip()
                                 
+                                # CRITICAL: Don't skip if the label is just "Post"
+                                if label == "Post" or text_content == "Post":
+                                    btn = target
+                                    print(f"Found EXACT Post button: '{text_content}' (Label: '{label}')")
+                                    break
+
+                                # Skip the "Add to your post" widget buttons
                                 if "Add to your post" in label or "Add to your post" in text_content:
-                                    print(f"Skipping 'Add to your post' button found via {sel}")
                                     continue
-                                    
+                                
                                 if target.is_enabled():
                                     btn = target
-                                    print(f"Found active button: '{text_content.strip()}' (Label: '{label}') using selector: {sel}")
+                                    btn_text = text_content or label
+                                    print(f"Found active button: '{btn_text}'")
                                     break
-                                else:
-                                    print(f"Found button '{text_content.strip()}' but it is DISABLED.")
                         if btn: break
                     except: continue
 
                 if btn:
+                    clicked_text = (btn.text_content() or btn.get_attribute("aria-label") or "").strip()
+                    print(f"Clicking '{clicked_text}'...")
                     btn.click(force=True)
-                    print("Clicked button, waiting for transition...")
-                    time.sleep(5) # Wait for next step or dialog closure
                     
+                    if screenshot_path:
+                         step_screenshot = screenshot_path.replace(".png", f"_after_{clicked_text.replace(' ', '_')}.png")
+                         page.screenshot(path=step_screenshot)
+                         print(f"Step screenshot saved to {step_screenshot}")
+
+                    print(f"Waiting 10 seconds for transition...")
+                    time.sleep(10) 
+                    
+                    # Log visible buttons for debugging
+                    try:
+                        all_btns = page.locator("div[role='dialog'] [role='button']").all()
+                        labels = [ (b.get_attribute("aria-label") or b.text_content() or "").strip() for b in all_btns ]
+                        print(f"Current buttons in dialog: {labels}")
+                    except: pass
+
                     # Check if dialog is gone
-                    if not page.locator("div[role='dialog']").first.is_visible(timeout=3000):
-                        print("Post dialog closed. Submission appears complete.")
-                        if screenshot_path:
-                             page.screenshot(path=screenshot_path)
-                        break
+                    dialog = page.locator("div[role='dialog']").first
+                    if not dialog.is_visible(timeout=5000):
+                        print("Post dialog closed. Verification...")
+                        time.sleep(3)
+                        if not page.locator("div[role='dialog']").first.is_visible():
+                            print("Post submitted successfully")
+                            if screenshot_path:
+                                page.screenshot(path=screenshot_path)
+                            break
                     else:
-                        print("Dialog still visible, checking for next step or close...")
-                        # Check for "Not now" or "Maybe later" (Boost post prompts)
+                        print("Dialog still visible. Checking for prompts (Not now, etc)...")
                         try:
-                            not_now = page.locator("div[role='dialog'] [role='button']:has-text('Not now')").first
-                            if not_now.is_visible(timeout=1000):
-                                print("Found 'Not now' button, clicking...")
+                            # Try to close any follow-up dialogs (Boost, etc)
+                            not_now = page.locator("div[role='dialog'] [role='button']:has-text('Not now'), div[role='dialog'] [aria-label='Close']").first
+                            if not_now.is_visible(timeout=2000):
+                                print(f"Found prompt '{not_now.text_content()}', clicking...")
                                 not_now.click()
-                                time.sleep(2)
+                                time.sleep(3)
                         except: pass
-
-                        if screenshot_path:
-                             page.screenshot(path=screenshot_path.replace(".png", f"_step_{step+1}.png"))
                 else:
-                    print("No more active submission buttons found.")
-
-                    # Final success check: Is the original textbox gone?
-                    if not page.locator(textbox_selector).first.is_visible():
-                         print("Original textbox is gone. Assuming post success (dialog might be an upsell).")
-                         # Try to close whatever remains
-                         try:
-                             close_btn = page.locator("div[role='dialog'] [aria-label='Close']").first
-                             if close_btn.is_visible():
-                                 close_btn.click()
-                         except: pass
-                    elif not page.locator("div[role='dialog']").first.is_visible():
-                         print("Dialog is gone. Success.")
-                    else:
-                         print("Error: Stuck in dialog. Trying Escape key fallback...")
-                         page.keyboard.press("Escape")
-                         time.sleep(2)
+                    print("No explicit button found. Trying Ctrl+Enter fallback...")
+                    page.keyboard.press("Control+Enter")
+                    time.sleep(15)
+                    if not page.locator("div[role='dialog']").first.is_visible(timeout=5000):
+                         print("Dialog closed via Ctrl+Enter. Success.")
+                         print("Post submitted successfully")
+                         if screenshot_path:
+                             page.screenshot(path=screenshot_path)
                     break
 
             context.close()
@@ -299,14 +318,13 @@ def login_mode():
         context = p.chromium.launch_persistent_context(user_data_dir=SESSION_DIR, headless=False, channel="chrome")
         page = context.new_page()
         page.goto("https://www.facebook.com")
-        
         while True:
             try:
                 if page.is_closed(): break
                 time.sleep(1)
             except: break
-        
-        print("Session saved.")
+        context.storage_state(path=STORAGE_STATE)
+        print(f"Session and Storage State saved to {SESSION_DIR}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

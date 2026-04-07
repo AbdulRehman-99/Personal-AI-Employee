@@ -1,3 +1,11 @@
+---
+name: facebook-integration
+description: |
+  Empowers the AI Employee with robust Facebook automation and monitoring capabilities. Using Playwright-driven browser interaction, this skill handles multi-page profile switching, monitors notifications for urgent events, and executes complex post compositions (including media support) from the AI Employee Vault's approved queue. It ensures professional social presence with a strictly local-first, human-in-the-loop security model.
+ 
+---
+
+
 # Facebook Integration Skill
 
 ## Overview

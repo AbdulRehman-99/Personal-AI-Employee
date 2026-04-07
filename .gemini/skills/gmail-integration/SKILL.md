@@ -1,3 +1,11 @@
+---
+name: gemail-integration
+description: |
+  Integrates Gmail as a core perception and communication channel for the AI Employee. This skill acts as a "Watcher" by monitoring the inbox for new client communications and as an "Action" by drafting and sending emails upon human approval. It supports the standard AI Employee workflow by standardizing email inputs into vault tasks and providing an MCP-compliant server for automated, verified email delivery.
+  
+---
+
+
 # Gmail Integration Skill
 
 This skill provides integration with Gmail for monitoring incoming emails and sending emails via the Gmail API. It supports the "Personal AI Employee" architecture by acting as a "Watcher" and an "Action" (MCP-like).

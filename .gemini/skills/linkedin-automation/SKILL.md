@@ -1,3 +1,10 @@
+---
+name: linkedin-automation
+description: |
+  Enables the AI Employee to autonomously manage professional networking by posting updates and engagement on LinkedIn. It uses Playwright for browser automation, supports session persistence for zero-friction execution, and integrates with the AI Employee Vault's approval workflow to ensure all professional communications are human-verified before going live.
+---
+
+
 # LinkedIn Automation Skill
 
 This skill automates posting updates to LinkedIn using Playwright.

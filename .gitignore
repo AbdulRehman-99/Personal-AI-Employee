@@ -24,9 +24,17 @@ whatsapp_session/
 **/*_session/
 
 # Debug Artifacts
-debug_*.png
-post_error_debug.png
-FB_POST_*.png
+*.png
+*.log
+AI_Employee_Vault/Logs/*.png
+AI_Employee_Vault/Logs/*.json
+
+# Automation Sessions (Cookies/Secrets)
+**/*_session/
+**/*_session_failed_*/
+**/*_session_backup_*/
+**/*_session.json
+linkedin_session.json
 
 # Obsidian Workspace State
 **/workspace.json

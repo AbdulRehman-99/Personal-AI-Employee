@@ -1,3 +1,10 @@
+---
+name: odoo-integration
+description: |
+  Provides the AI Employee with deep integration into Odoo 17 (Community Edition) for local-first financial and business management. This skill enables autonomous accounting tasks like invoice creation and payment registration via JSON-RPC, monitors financial health through a dedicated watcher, and serves as a primary data source for generating "Monday Morning CEO Briefings" and performance audits within the Obsidian vault.
+ 
+---
+
 # Odoo Integration Skill
 
 ## Overview

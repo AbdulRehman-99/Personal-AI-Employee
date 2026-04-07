@@ -1,3 +1,11 @@
+---
+name: approval-workflow
+description: |
+  The central governance mechanism of the AI Employee system, enforcing a "Zero-Trust" execution model. This skill manages the critical "Human-in-the-Loop" (HITL) gateway, ensuring that no external actions—such as social media posts, emails, or financial transactions—are executed without explicit human verification. it facilitates the movement of tasks from 'Pending_Approval' to 'Approved', serving as the final safety buffer for autonomous operations.
+  
+---
+
+
 # Approval Workflow Skill
 
 This skill manages the Human-in-the-Loop (HITL) approval process for sensitive actions.
